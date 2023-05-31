@@ -3,63 +3,86 @@ import { createElement } from 'react';
 import styles from './app.module.css';
 import { useState } from 'react';
 
-const buttonsNumbers = [
-	{ id: 1, label: 'one' },
-	{ id: 2, label: 'two' },
-	{ id: 3, label: 'three' },
-	{ id: 4, label: 'four' },
-	{ id: 5, label: 'five' },
-	{ id: 6, label: 'six' },
-	{ id: 7, label: 'seven' },
-	{ id: 8, label: 'eight' },
-	{ id: 9, label: 'nine' },
-	{ id: 0, label: 'zero' },
-];
-
 export const App = () => {
-	const [inputValue, setInputValue] = useState('');
+	const buttonsNumbers = [
+		{ id: 1, label: 'one' },
+		{ id: 2, label: 'two' },
+		{ id: 3, label: 'three' },
+		{ id: 4, label: 'four' },
+		{ id: 5, label: 'five' },
+		{ id: 6, label: 'six' },
+		{ id: 7, label: 'seven' },
+		{ id: 8, label: 'eight' },
+		{ id: 9, label: 'nine' },
+		{ id: 0, label: 'zero' },
+	];
+
+	const [inputValue, setInputValue] = useState('0');
+	const [showOrangeText, setShowOrangeText] = useState(false);
 
 	const numberClick = (buttonId) => {
-		setInputValue((prevValue) => prevValue + buttonId);
+		if (inputValue === '0') {
+			setInputValue(String(buttonId));
+		} else {
+			setInputValue((prevValue) => prevValue + buttonId);
+		}
+		setShowOrangeText(false);
 	};
 
 	const clearClick = () => {
-		setInputValue(' ');
+		setInputValue('0');
+		setShowOrangeText(false);
 	};
 
 	const resultClick = () => {
-		setInputValue(eval(inputValue));
+		const regex = /(\d+)([+-])(\d+)/;
+		const match = inputValue.match(regex);
+		if (match) {
+			const a = parseFloat(match[1]);
+			const sign = match[2];
+			const b = parseFloat(match[3]);
+			let result;
+			switch (sign) {
+				case '+':
+					result = a + b;
+					setInputValue(result);
+					break;
+				case '-':
+					result = a - b;
+					setInputValue(result);
+					break;
+				default:
+					return;
+			}
+		}
+		setShowOrangeText(true);
 	};
 
 	return (
-		<div className={styles.app}>
-			<div className={styles.screen}>
-				<p>{inputValue}</p>
+		<div className="app">
+			<div className="screen">
+				<p className={showOrangeText ? styles.orange : styles.white}>{inputValue}</p>
 			</div>
-			<div className={styles.buttons}>
+			<div className="buttons">
 				{buttonsNumbers.map((button) => (
-					<button
-						key={button.id}
-						onClick={() => numberClick(button.id)}
-						className={`${styles.label} ${styles.btn}`}
-					>
+					<button key={button.id} onClick={() => numberClick(button.id)} className={`btn ${button.label}`}>
 						{button.id}
 					</button>
 				))}
 
-				<button className={`${styles.bgOrange} ${styles.btn} ${styles.minus}`} onClick={() => numberClick('-')}>
+				<button className="minus bgOrange btn" onClick={() => numberClick('-')}>
 					-
 				</button>
 
-				<button className={`${styles.bgOrange} ${styles.btn} ${styles.plus}`} onClick={() => numberClick('+')}>
+				<button className="plus bgOrange btn" onClick={() => numberClick('+')}>
 					{' '}
 					+{' '}
 				</button>
-				<button className={`${styles.bgOrange} ${styles.btn} ${styles.equal}`} onClick={resultClick}>
+				<button className="equal bgOrange btn" onClick={resultClick}>
 					{' '}
 					={' '}
 				</button>
-				<button className={`${styles.bgOrange} ${styles.btn} ${styles.ac}`} onClick={clearClick}>
+				<button className="ac bgOrange btn" onClick={clearClick}>
 					{' '}
 					С{' '}
 				</button>
