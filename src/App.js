@@ -1,62 +1,44 @@
 import './App.css';
-import { createElement } from 'react';
 import styles from './app.module.css';
 import { useState } from 'react';
 
 export const App = () => {
-	const buttonsNumbers = [
-		{ id: 1, label: 'one' },
-		{ id: 2, label: 'two' },
-		{ id: 3, label: 'three' },
-		{ id: 4, label: 'four' },
-		{ id: 5, label: 'five' },
-		{ id: 6, label: 'six' },
-		{ id: 7, label: 'seven' },
-		{ id: 8, label: 'eight' },
-		{ id: 9, label: 'nine' },
-		{ id: 0, label: 'zero' },
-	];
+	const buttonsNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
 	const [inputValue, setInputValue] = useState('0');
 	const [showOrangeText, setShowOrangeText] = useState(false);
 
-	const numberClick = (buttonId) => {
+	const handleNumberButtonClick = (button) => {
 		if (inputValue === '0') {
-			setInputValue(String(buttonId));
+			setInputValue(String(button));
 		} else {
-			setInputValue((prevValue) => prevValue + buttonId);
+			setInputValue((prevValue) => prevValue + button);
 		}
 		setShowOrangeText(false);
 	};
 
-	const clearClick = () => {
+	const handleClearButtonClick = () => {
 		setInputValue('0');
 		setShowOrangeText(false);
 	};
 
-	const resultClick = () => {
-		const regex = /(\d+)([+-])(\d+)/;
-		const match = inputValue.match(regex);
-		if (match) {
-			const a = parseFloat(match[1]);
-			const sign = match[2];
-			const b = parseFloat(match[3]);
-			let result;
-			switch (sign) {
-				case '+':
-					result = a + b;
-					setInputValue(result);
-					break;
-				case '-':
-					result = a - b;
-					setInputValue(result);
-					break;
-				default:
-					return;
-			}
+	const handleResultButtonClick = () => {
+		const [a, sign, b] = inputValue.split(/(\+|\-)/);
+		let result;
+		switch (sign) {
+		  case '+':
+			result = parseFloat(a) + parseFloat(b);
+			setInputValue(result);
+			break;
+		  case '-':
+			result = parseFloat(a) - parseFloat(b);
+			setInputValue(result);
+			break;
+		  default:
+			return;
 		}
 		setShowOrangeText(true);
-	};
+	  };
 
 	return (
 		<div className="app">
@@ -65,24 +47,24 @@ export const App = () => {
 			</div>
 			<div className="buttons">
 				{buttonsNumbers.map((button) => (
-					<button key={button.id} onClick={() => numberClick(button.id)} className={`btn ${button.label}`}>
-						{button.id}
+					<button key={button} onClick={() => handleNumberButtonClick(button)} className='btn'>
+						{button}
 					</button>
 				))}
 
-				<button className="minus bgOrange btn" onClick={() => numberClick('-')}>
+				<button className="minus bgOrange btn" onClick={() => handleNumberButtonClick('-')}>
 					-
 				</button>
 
-				<button className="plus bgOrange btn" onClick={() => numberClick('+')}>
+				<button className="plus bgOrange btn" onClick={() => handleNumberButtonClick('+')}>
 					{' '}
 					+{' '}
 				</button>
-				<button className="equal bgOrange btn" onClick={resultClick}>
+				<button className="equal bgOrange btn" onClick={handleResultButtonClick}>
 					{' '}
 					={' '}
 				</button>
-				<button className="ac bgOrange btn" onClick={clearClick}>
+				<button className="ac bgOrange btn" onClick={handleClearButtonClick}>
 					{' '}
 					С{' '}
 				</button>
